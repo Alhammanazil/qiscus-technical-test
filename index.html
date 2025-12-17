@@ -20,6 +20,20 @@
     </script>
 
     <style>
+      /* Reset body margin/padding */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+      }
+
       /* Custom Scrollbar */
       ::-webkit-scrollbar {
         width: 5px;
@@ -40,11 +54,13 @@
       /* Dynamic viewport height untuk mobile agar tidak tertutup browser bar */
       #app {
         height: 100dvh;
+        max-height: 100dvh;
       }
 
       @supports not (height: 100dvh) {
         #app {
           height: 100vh;
+          max-height: 100vh;
         }
       }
 
@@ -81,12 +97,10 @@
       }
     </style>
   </head>
-  <body
-    class="bg-slate-100 flex items-center justify-center min-h-screen text-slate-800 font-sans"
-  >
+  <body class="bg-slate-100 text-slate-800 font-sans">
     <div
       id="app"
-      class="w-full h-screen md:h-[90vh] md:max-w-md md:rounded-2xl md:shadow-2xl bg-white flex flex-col overflow-hidden relative"
+      class="w-full h-full md:h-[90vh] md:max-w-md md:rounded-2xl md:shadow-2xl md:mx-auto md:my-auto bg-white flex flex-col overflow-hidden relative"
     >
       <header
         v-if="chatData"
