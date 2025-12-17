@@ -2,7 +2,7 @@
     "results": [
         {
             "room": {
-                "name": "Qiscus Support: #Order-2024001",
+                "name": "Qiscus Support",
                 "id": 12456,
                 "image_url": "https://ui-avatars.com/api/?name=Qiscus+Help&background=00a884&color=fff&size=128",
                 "participant": [
@@ -60,7 +60,7 @@
                     "id": 1702860600000,
                     "type": "video",
                     "message": "Sebagai panduan awal, Kakak bisa simak video tutorial singkat berikut ini ya",
-                    "attachment_url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+                    "attachment_url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
                     "sender": "agent@mail.com"
                 },
                 {
