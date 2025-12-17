@@ -36,6 +36,49 @@
       video {
         clip-path: inset(0% 0% 0% 0% round 0.5rem);
       }
+
+      /* Dynamic viewport height untuk mobile agar tidak tertutup browser bar */
+      #app {
+        height: 100dvh;
+      }
+
+      @supports not (height: 100dvh) {
+        #app {
+          height: 100vh;
+        }
+      }
+
+      /* Animasi fade in untuk pesan */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in {
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      /* Animasi untuk scroll button */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-slide-up {
+        animation: slideUp 0.2s ease-out;
+      }
     </style>
   </head>
   <body
@@ -84,12 +127,13 @@
       </header>
 
       <main
-        class="flex-1 overflow-y-auto p-4 space-y-5 bg-[#f0f2f5] scroll-smooth"
+        class="flex-1 overflow-y-auto p-4 space-y-5 bg-[#f0f2f5] scroll-smooth relative"
         ref="chatContainer"
+        @scroll="handleScroll"
       >
         <div class="flex justify-center my-2">
           <span
-            class="bg-slate-200 text-slate-500 text-[10px] px-3 py-1 rounded-full font-medium shadow-sm"
+            class="bg-slate-200 text-slate-500 text[10px] px-3 py-1 rounded-full font-medium shadow-sm"
             >Hari Ini</span
           >
         </div>
@@ -212,6 +256,28 @@
         </div>
       </main>
 
+      <!-- Floating Scroll to Bottom Button -->
+      <button
+        v-show="showScrollButton"
+        @click="scrollToBottom"
+        class="absolute bottom-24 right-4 w-10 h-10 bg-[#00a884] hover:bg-[#008f6f] text-white rounded-full shadow-lg flex items-center justify-center transition-all animate-slide-up z-30"
+        title="Scroll ke bawah"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+          />
+        </svg>
+      </button>
+
       <footer class="p-3 bg-white border-t border-slate-200 flex-shrink-0">
         <form
           @submit.prevent="sendMessage"
@@ -278,6 +344,7 @@
             currentUserEmail: "customer@mail.com",
             newMessage: "",
             rawResponse: { results: [] },
+            showScrollButton: false,
           };
         },
         computed: {
@@ -304,6 +371,16 @@
               .catch((error) => {
                 console.error("Error loading chat data:", error);
               });
+          },
+          handleScroll() {
+            const container = this.$refs.chatContainer;
+            if (container) {
+              // Tampilkan tombol jika tidak di bawah, sembunyikan jika sudah di bawah
+              const scrollPosition =
+                container.scrollTop + container.clientHeight;
+              const scrollHeight = container.scrollHeight;
+              this.showScrollButton = scrollHeight - scrollPosition > 200;
+            }
           },
           isMe(email) {
             return email === this.currentUserEmail;
