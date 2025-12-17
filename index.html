@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="qiscus_logo.png" sizes="32x32" />
+    <title>Qiscus Support</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      tailwind.config = {
+        theme: { extend: { fontFamily: { sans: ["Inter", "sans-serif"] } } },
+      };
+    </script>
+
+    <style>
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 5px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+
+      /* Smooth Video Player rounded corners fix in some browsers */
+      video {
+        clip-path: inset(0% 0% 0% 0% round 0.5rem);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-slate-100 flex items-center justify-center min-h-screen text-slate-800 font-sans"
+  >
+    <div
+      id="app"
+      class="w-full h-screen md:h-[90vh] md:max-w-md md:rounded-2xl md:shadow-2xl bg-white flex flex-col overflow-hidden relative"
+    >
+      <header
+        v-if="chatData"
+        class="bg-white p-4 border-b border-slate-200 flex items-center space-x-3 shadow-sm z-10 sticky top-0"
+      >
+        <div class="relative">
+          <img
+            :src="chatData.room.image_url"
+            class="w-10 h-10 rounded-full object-cover border border-slate-200 p-0.5"
+            alt="Avatar"
+          />
+          <span
+            class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"
+          ></span>
+        </div>
+        <div class="flex-1">
+          <h1 class="font-semibold text-slate-900 leading-tight">
+            {{ chatData.room.name }}
+          </h1>
+          <p class="text-xs text-slate-500 mt-0.5">Support Team • Online</p>
+        </div>
+        <button class="text-slate-400 hover:text-slate-600 transition">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+            />
+          </svg>
+        </button>
+      </header>
+
+      <main
+        class="flex-1 overflow-y-auto p-4 space-y-5 bg-[#f0f2f5] scroll-smooth"
+        ref="chatContainer"
+      >
+        <div class="flex justify-center my-2">
+          <span
+            class="bg-slate-200 text-slate-500 text-[10px] px-3 py-1 rounded-full font-medium shadow-sm"
+            >Hari Ini</span
+          >
+        </div>
+
+        <div
+          v-for="(msg, index) in chatData.comments"
+          :key="msg.id"
+          class="flex flex-col animate-fade-in"
+          :class="isMe(msg.sender) ? 'items-end' : 'items-start'"
+        >
+          <span
+            v-if="!isMe(msg.sender)"
+            class="text-[11px] text-slate-500 mb-1 ml-1 font-medium flex items-center gap-1"
+          >
+            {{ getSenderName(msg.sender) }}
+            <span
+              v-if="msg.sender.includes('agent')"
+              class="bg-blue-100 text-blue-600 px-1 rounded text-[9px]"
+              >Admin</span
+            >
+          </span>
+
+          <div
+            class="max-w-[85%] shadow-sm relative text-sm overflow-hidden transition-all duration-200"
+            :class="[
+                        isMe(msg.sender) 
+                            ? 'bg-[#00a884] text-white rounded-2xl rounded-tr-sm' /* Warna hijau ala WhatsApp Web */
+                            : 'bg-white text-slate-800 border border-slate-100 rounded-2xl rounded-tl-sm'
+                     ]"
+          >
+            <div v-if="msg.type === 'image'" class="p-1">
+              <a
+                :href="msg.attachment_url"
+                target="_blank"
+                class="block group relative overflow-hidden rounded-lg cursor-zoom-in"
+              >
+                <img
+                  :src="msg.attachment_url"
+                  class="w-full h-auto max-h-60 object-cover transform transition duration-500 group-hover:scale-105"
+                />
+                <div
+                  class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center"
+                >
+                  <span
+                    class="opacity-0 group-hover:opacity-100 text-white text-xs bg-black/50 px-3 py-1 rounded-full backdrop-blur-sm"
+                    >Lihat Gambar</span
+                  >
+                </div>
+              </a>
+              <p v-if="msg.message" class="px-2 pb-1 pt-2 text-sm">
+                {{ msg.message }}
+              </p>
+            </div>
+
+            <div v-else-if="msg.type === 'video'" class="p-1 min-w-[250px]">
+              <div class="relative bg-black rounded-lg overflow-hidden">
+                <video
+                  controls
+                  class="w-full h-auto bg-black block"
+                  preload="metadata"
+                >
+                  <source :src="msg.attachment_url" type="video/mp4" />
+                  Browser anda tidak support video.
+                </video>
+              </div>
+              <p v-if="msg.message" class="px-2 pb-1 pt-2 text-sm font-medium">
+                {{ msg.message }}
+              </p>
+            </div>
+
+            <div v-else-if="msg.type === 'pdf'" class="p-1 min-w-[240px]">
+              <a
+                :href="msg.attachment_url"
+                target="_blank"
+                class="flex items-center gap-3 p-3 rounded-lg transition group text-inherit decoration-0"
+                :class="isMe(msg.sender) ? 'bg-white/10 hover:bg-white/20' : 'bg-slate-50 hover:bg-slate-100'"
+              >
+                <div class="bg-white p-2 rounded-lg shadow-sm shrink-0">
+                  <svg
+                    class="w-6 h-6 text-red-500"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      d="M7 2h10l5 5v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 2v16h13V8h-4V4H7zm11 5l3 3h-3V9z"
+                    />
+                  </svg>
+                </div>
+
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium truncate text-sm">Invoice_Lunas.pdf</p>
+                  <p class="text-[10px] opacity-70">1.2 MB • PDF Document</p>
+                </div>
+              </a>
+              <p
+                v-if="msg.message"
+                class="px-3 pb-2 pt-1 text-sm border-t border-dashed mt-1"
+                :class="isMe(msg.sender) ? 'border-white/20' : 'border-slate-200'"
+              >
+                {{ msg.message }}
+              </p>
+            </div>
+
+            <div v-else class="px-3 py-2">{{ msg.message }}</div>
+
+            <div
+              class="text-[10px] pb-1 px-2 text-right opacity-70 flex justify-end items-center gap-1 select-none"
+              :class="isMe(msg.sender) ? 'text-green-100' : 'text-slate-400'"
+            >
+              {{ formatTime(msg.id) }}
+              <span v-if="isMe(msg.sender)">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
+                  />
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="p-3 bg-white border-t border-slate-200">
+        <form
+          @submit.prevent="sendMessage"
+          class="flex items-center gap-2 bg-slate-100 rounded-2xl px-4 py-2 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-green-500/50 focus-within:shadow-md"
+        >
+          <button
+            type="button"
+            class="text-slate-400 hover:text-slate-600 transition p-1 rounded-full hover:bg-slate-200"
+            title="Lampirkan File"
+          >
+            <svg
+              class="h-6 w-6 transform rotate-45"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
+              />
+            </svg>
+          </button>
+
+          <input
+            v-model="newMessage"
+            type="text"
+            placeholder="Ketik pesan..."
+            class="flex-1 bg-transparent text-sm text-slate-700 placeholder-slate-400 focus:outline-none"
+            autocomplete="off"
+          />
+
+          <button
+            type="submit"
+            :disabled="!newMessage"
+            class="bg-[#00a884] disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-full hover:bg-[#008f6f] transition shadow-sm flex-shrink-0 transform active:scale-95"
+          >
+            <svg
+              class="h-5 w-5 translate-x-0.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </svg>
+          </button>
+        </form>
+      </footer>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+      const { createApp, nextTick } = Vue;
+
+      createApp({
+        data() {
+          return {
+            currentUserEmail: "customer@mail.com",
+            newMessage: "",
+            rawResponse: { results: [] },
+          };
+        },
+        computed: {
+          chatData() {
+            return this.rawResponse.results[0];
+          },
+        },
+        created() {
+          this.loadChatData();
+        },
+        mounted() {
+          this.scrollToBottom();
+        },
+        methods: {
+          loadChatData() {
+            fetch("./data.json")
+              .then((response) => response.json())
+              .then((data) => {
+                this.rawResponse = data;
+                this.$nextTick(() => {
+                  this.scrollToBottom();
+                });
+              })
+              .catch((error) => {
+                console.error("Error loading chat data:", error);
+              });
+          },
+          isMe(email) {
+            return email === this.currentUserEmail;
+          },
+          getSenderName(email) {
+            const p = this.chatData.room.participant.find(
+              (p) => p.id === email
+            );
+            return p ? p.name : email;
+          },
+          formatTime(timestamp) {
+            if (!timestamp) return "10:00";
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString("id-ID", {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+          },
+          sendMessage() {
+            if (!this.newMessage.trim()) return;
+
+            this.chatData.comments.push({
+              id: Date.now(),
+              type: "text",
+              message: this.newMessage,
+              sender: this.currentUserEmail,
+            });
+
+            this.newMessage = "";
+            nextTick(() => {
+              this.scrollToBottom();
+            });
+          },
+          scrollToBottom() {
+            const container = this.$refs.chatContainer;
+            if (container) container.scrollTop = container.scrollHeight;
+          },
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>

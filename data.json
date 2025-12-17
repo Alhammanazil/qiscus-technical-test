@@ -1,0 +1,81 @@
+{
+    "results": [
+        {
+            "room": {
+                "name": "Qiscus Support: #Order-2024001",
+                "id": 12456,
+                "image_url": "https://ui-avatars.com/api/?name=Qiscus+Help&background=00a884&color=fff&size=128",
+                "participant": [
+                    {
+                        "id": "admin@mail.com",
+                        "name": "System Admin",
+                        "role": 0
+                    },
+                    {
+                        "id": "agent@mail.com",
+                        "name": "Rian (CS)",
+                        "role": 1
+                    },
+                    {
+                        "id": "customer@mail.com",
+                        "name": "Budi Santoso",
+                        "role": 2
+                    }
+                ]
+            },
+            "comments": [
+                {
+                    "id": 1702860000000,
+                    "type": "text",
+                    "message": "Halo Min, saya mau tanya status pesanan INV-2024001 kok belum berubah ya? Padahal sudah transfer via m-banking",
+                    "sender": "customer@mail.com"
+                },
+                {
+                    "id": 1702860100000,
+                    "type": "text",
+                    "message": "Halo Kak Budi. Mohon maaf atas ketidaknyamanannya. Bisa dibantu lampirkan bukti transfernya agar kami cek manual?",
+                    "sender": "agent@mail.com"
+                },
+                {
+                    "id": 1702860300000,
+                    "type": "image",
+                    "message": "Ini bukti transfernya min, tadi pagi jam 6",
+                    "attachment_url": "https://images.unsplash.com/photo-1554224154-26032ffc0d07?q=80&w=600&auto=format&fit=crop",
+                    "sender": "customer@mail.com"
+                },
+                {
+                    "id": 1702860400000,
+                    "type": "text",
+                    "message": "Baik, terima kasih datanya. Sudah kami verifikasi dan status pesanan sudah Lunas ya Kak",
+                    "sender": "agent@mail.com"
+                },
+                {
+                    "id": 1702860500000,
+                    "type": "pdf",
+                    "message": "Berikut saya lampirkan Invoice resminya kak, Silakan di cek dahulu",
+                    "attachment_url": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+                    "sender": "agent@mail.com"
+                },
+                {
+                    "id": 1702860600000,
+                    "type": "video",
+                    "message": "Sebagai panduan awal, Kakak bisa simak video tutorial singkat berikut ini ya",
+                    "attachment_url": "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+                    "sender": "agent@mail.com"
+                },
+                {
+                    "id": 1702860700000,
+                    "type": "text",
+                    "message": "Wah cepat sekali prosesnya. Terima kasih min!",
+                    "sender": "customer@mail.com"
+                },
+                {
+                    "id": 1702860800000,
+                    "type": "text",
+                    "message": "Sama-sama Kak Budi. Ada lagi yang bisa saya bantu?",
+                    "sender": "agent@mail.com"
+                }
+            ]
+        }
+    ]
+}
